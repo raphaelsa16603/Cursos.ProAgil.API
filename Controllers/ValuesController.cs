@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using ProAgil.api.Data;
 using ProAgil.api.Models;
 
@@ -20,52 +22,37 @@ namespace ProAgil.api.Controllers
         }
         // GET api/values
         [HttpGet]
-        public ActionResult<IEnumerable<Evento>> Get()
+        public async Task<IActionResult> Get()
         {
-            return this.Context.Eventos.ToList();
-            // return new Evento[] { 
-            //     new Evento() {
-            //         EventoId = 1,
-            //         Local = "Campina Grande",
-            //         Lote = "1º Lote",
-            //         QtdPessoas = 350,
-            //         Tema = "Porra nenhuma, seu bosta!",
-            //         DataEvento = DateTime.Now.AddDays(4).ToString("dd/MM/yyyy")
-            //     },
-            //     new Evento() {
-            //         EventoId = 2,
-            //         Local = "João Pessoa",
-            //         Lote = "2º Lote",
-            //         QtdPessoas = 689,
-            //         Tema = "Vai tomar no C* seu bando de fdp!",
-            //         DataEvento = DateTime.Now.AddDays(25).ToString("dd/MM/yyyy")
-            //     }
-            //  };
+            try
+            {
+                var results = await this.Context.Eventos.ToListAsync();
+                return Ok(results);    
+            }
+            catch (System.Exception ex)
+            {
+                return this.StatusCode(
+                    StatusCodes.Status500InternalServerError,
+                    $"Banco de Dados Falhou : {ex.Message}");
+            }
         }
 
         // GET api/values/5
         [HttpGet("{id}")]
-        public ActionResult<Evento> Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
-            return this.Context.Eventos.FirstOrDefault(x => x.EventoId == id);
-            // return new Evento[] { 
-            //     new Evento() {
-            //         EventoId = 1,
-            //         Local = "Campina Grande",
-            //         Lote = "1º Lote",
-            //         QtdPessoas = 350,
-            //         Tema = "Porra nenhuma, seu bosta!",
-            //         DataEvento = DateTime.Now.AddDays(4).ToString("dd/MM/yyyy")
-            //     },
-            //     new Evento() {
-            //         EventoId = 2,
-            //         Local = "João Pessoa",
-            //         Lote = "2º Lote",
-            //         QtdPessoas = 689,
-            //         Tema = "Vai tomar no C* seu bando de fdp!",
-            //         DataEvento = DateTime.Now.AddDays(25).ToString("dd/MM/yyyy")
-            //     }
-            //  }.FirstOrDefault(x => x.EventoId == id);
+            try
+            {
+                var results = await 
+                    this.Context.Eventos.FirstOrDefaultAsync(x => x.EventoId == id);
+                return Ok(results);    
+            }
+            catch (System.Exception ex)
+            {
+                return this.StatusCode(
+                    StatusCodes.Status500InternalServerError,
+                    $"Banco de Dados Falhou : {ex.Message}");
+            }
         }
 
         // POST api/values
